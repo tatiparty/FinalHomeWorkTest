@@ -13,8 +13,12 @@ import webDriverFactory.WebDriverFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Properties;
 
 public class FinalHomeWorkTest {
@@ -52,15 +56,36 @@ public class FinalHomeWorkTest {
 
     @Test
     public void testOtusSite(){
-        //Войти в Личный кабинет, перейти в Курсы->Тестирование
-        AccountPage firstTitle = new MainPage(driver).
+        //Войти в Личный кабинет, перейти в Курсы->Тестирование и проверить количество действующих курсов
+        /*int activeCourses = new MainPage(driver).
                 openUrl(url).
                 goToAuth().
                 auth(login, password).
-                openTestingCourse();
+                openTestingCourse().
+                checkCourseCount();
 
-        //Assert.assertEquals(firstTitle, "Данные успешно сохранены");
+        Assert.assertEquals(activeCourses, 11);*/
 
+        //Перейти на карточку курса и проверить информацию по ней
+        ArrayList<String> newCourseCard = new MainPage(driver).
+                openUrl(url).
+                goToAuth().
+                auth(login, password).
+                openTestingCourse().
+                goToCourseCard().
+                validateCourseName();
+
+        ArrayList<String> goldenValues = new ArrayList<String>();
+        goldenValues.add(0, "Java QA Engineer. Professional");
+        goldenValues.add(1, "Автоматизация тестирования на Java продвинутого уровня");
+        goldenValues.add(2, "4 месяца");
+        goldenValues.add(3, "Online");
+
+        Collections.sort(newCourseCard);
+        Collections.sort(goldenValues);
+
+        boolean outcome = newCourseCard.equals(goldenValues);
+        Assert.assertTrue(outcome);
 
         logger.info(driver.manage().getCookies());
     }
